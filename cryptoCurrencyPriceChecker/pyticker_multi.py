@@ -12,8 +12,6 @@ prevPrice=[]
 cryptoToken = []
 prevStr=""
 
-
-
 def initiateRequest():
     print("\033[K", end="")
     print("Initiating Request...", end='\r')
@@ -47,7 +45,7 @@ def validateCurrencies(data, tokens):
                 validTokens.append(token)
                 break
         if(found==False):
-            print("Currency {} is Invalid. Please check the spelling once!")
+            print("Currency {} is Invalid. Please check the spelling once!".format(token))
 
         found=False
     return(validTokens)
@@ -127,8 +125,8 @@ def main():
 #    print(prevPrice)
 #    print(priceArray)
     for i in range(len(tokens)):
-        threshold = float(input("Enter the threshold for {}: ".format(tokens[i])))
-        allowedError = float(input("Enter the amount of flexible margin for {}: ".format(tokens[i])))
+        threshold = float(input("Enter the threshold for {}: ".format(tokens[i]))) # You can set the threshold percentage so that any change beyond the set percentage will trigger an email to the mentioned email ID
+        allowedError = float(input("Enter the amount of flexible margin for {}: ".format(tokens[i]))) # You can also set the allowable amount of error in the threshold or can just enter Zero if you are okay with the threshold
         thresholds.append(threshold)
         flexMargins.append(allowedError)
 
@@ -148,11 +146,8 @@ def main():
         data = initiateRequest()
         cryptoToken = tokens
         prices= getPrice(data, cryptoToken)
-#        if(price==-1):
-#            return
         analyzeData(prices, thresholds, flexMargins)
         time.sleep(10)
 
 if __name__=='__main__':
-#    prevPrice=0
     main() 
