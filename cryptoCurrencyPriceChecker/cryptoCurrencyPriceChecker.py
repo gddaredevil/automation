@@ -16,10 +16,26 @@ def initiateRequest():
     print("\033[K", end="")
     print("Initiating Request...", end='\r')
     url = "https://api.coindcx.com/exchange/ticker"
-    response = requests.get(url)
-    data = response.json()
+    while(1):
+        try:
+            response = requests.get(url)
+        except requests.exceptions.RequestException as e:
+            time.sleep(5)
+        #    print(e)
+            print("\033[K",end="")
+            print("Network Connection Error...",end='\r')
+            continue
+        #    response=initiateRequest()
+        except requests.ConnectionError as r:
+            time.sleep(5)
+        #    print(e)
+            print("\033[K",end="")
+            print("Network Connection Error...",end='\r')
+            continue
+         #   response=initiateRequest()
+        data = response.json()
 #        print(data)
-    return(data)
+        return(data)
 
 def getPrice(data, tokens):
     print("\033[K",end="")
@@ -94,10 +110,15 @@ def sendMail(currency, prevVal, price):
     cred = eval(data)
     server.login(cred['username'], cred['password'])
     sen=""
+
+    #Logging
+    time_str = time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())
+    logging.warning("{} : {}".format(time_str, sen))
+
     if(prevVal > price):
-        sen="The value of {} took a dive from {} to {} and decreased by {}%".format(currency, prevVal, price, ((prevVal-price)/price)*100 )
+        sen="The value of {} took a dive from {} to {} and decreased by {}% at {}".format(currency, prevVal, price, abs(((prevVal-price)/price)*100) , time_str)
     else:
-        sen="The value of {} rose from {} to {} and increased by {}%".format(currency, prevVal, price, ((prevVal-price)/price)*100 )
+        sen="The value of {} rose from {} to {} and increased by {}% at {}".format(currency, prevVal, price, abs(((prevVal-price)/price)*100), time_str )
     message="""
     Subject: {} price alert!!
 
@@ -106,9 +127,7 @@ def sendMail(currency, prevVal, price):
     server.sendmail(cred['username'], cred['username'], message)
     print(sen)
 
-    #Logging
-    time_str = time.strftime("%d-%m-%Y %H:%M:%S", time.localtime())
-    logging.warning("{} : {}".format(time_str, sen))
+    
 
 def main():
     global cryptoToken
@@ -119,7 +138,7 @@ def main():
     tokens = input("Enter the Crypto Currency you wanna search: ").split(' ')
     thresholds=[]
     flexMargins=[]
-    print(tokens, len(tokens))
+    #print(tokens, len(tokens))
     prevPrice = [0 for i in range(len(tokens))]
     priceArray = [[] for i in range(len(tokens))]
 #    print(prevPrice)
@@ -147,7 +166,7 @@ def main():
         cryptoToken = tokens
         prices= getPrice(data, cryptoToken)
         analyzeData(prices, thresholds, flexMargins)
-        time.sleep(10)
+        time.sleep(5)
 
 if __name__=='__main__':
     main() 
