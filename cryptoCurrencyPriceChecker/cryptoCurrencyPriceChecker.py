@@ -62,6 +62,7 @@ def validateCurrencies(data, tokens):
                 break
         if(found==False):
             print("Currency {} is Invalid. Please check the spelling once!".format(token))
+            print("\nUsage:\n\tYou are supposed to enter in the format Currency_code+buying_currency.\n\tFor e.g.,\n\t\tBitcoin: BTCUSDT/BTCUSDC/BTCINR...\n\t\tEthereum: ETHUSDT/ETHUSDC/ETHINR...")
 
         found=False
     return(validTokens)
@@ -145,7 +146,8 @@ def main():
 #    print(priceArray)
     for i in range(len(tokens)):
         threshold = float(input("Enter the threshold for {}: ".format(tokens[i]))) # You can set the threshold percentage so that any change beyond the set percentage will trigger an email to the mentioned email ID
-        allowedError = float(input("Enter the amount of flexible margin for {}: ".format(tokens[i]))) # You can also set the allowable amount of error in the threshold or can just enter Zero if you are okay with the threshold
+        #allowedError = float(input("Enter the amount of flexible margin for {}: ".format(tokens[i]))) # You can also set the allowable amount of error in the threshold or can just enter Zero if you are okay with the threshold
+        allowedError= (threshold/100.0)*5.0
         thresholds.append(threshold)
         flexMargins.append(allowedError)
 
